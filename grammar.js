@@ -465,29 +465,39 @@ module.exports = grammar(CSHARP, {
     _html_comment_text: (_) => repeat1(/.|\n|\r/),
 
     // HTML Base Definitions
-    _tag_name: (_) => /[a-zA-Z0-9-:]+/,
-    _end_tag: ($) => seq("</", $._tag_name, ">"),
-    _html_attribute_name: (_) => /[a-zA-Z0-9-:]+/,
-    _boolean_html_attribute: (_) => /[a-zA-Z0-9-:]+/,
-    _html_attribute_value: ($) =>
+    tag_name: (_) => /[a-zA-Z0-9-:]+/,
+    _end_tag: ($) => seq("</", $.tag_name, ">"),
+    html_attribute_name: (_) => /[a-zA-Z0-9-:]+/,
+    boolean_html_attribute: (_) => /[a-zA-Z0-9-:]+/,
+    html_attribute_value: ($) =>
       seq(
         '"',
         repeat(
           choice(
             $.razor_explicit_expression,
             $.razor_implicit_expression,
-            /[^"@]+/,
+            // A text run must not start with a char that continues a C#
+            // postfix expression (. member, ( call, ? conditional-access,
+            // [ indexer), so @Foo.Bar / @Foo() / @Foo?.Bar / @items[0] keep
+            // extending the razor expression instead of the tail becoming
+            // attribute text. Such chars are still allowed mid-run.
+            /[^"@.(\[?][^"@]*/,
           ),
         ),
         '"',
       ),
-    _html_text: (_) => /[^<>&@.(\s]([^<>&@]*[^<>&@\s])?/,
+    // A text run must not START with a char that continues a C# postfix
+    // expression (. member, ( call, ? conditional-access, [ indexer), so that
+    // e.g. @Foo?.Bar() / @Foo.Bar / @items[0] keep extending the razor
+    // expression instead of the tail being swallowed as HTML text. These
+    // chars are still allowed in the middle/end of a text run.
+    _html_text: (_) => /[^<>&@.(\[?\s]([^<>&@]*[^<>&@\s])?/,
 
     razor_attribute_value: ($) =>
       seq('"', optional($.modifier), $.expression, '"'),
 
     _html_attribute: ($) =>
-      seq($._html_attribute_name, "=", $._html_attribute_value),
+      seq($.html_attribute_name, "=", $.html_attribute_value),
 
     razor_html_attribute: ($) =>
       seq($.razor_attribute_name, optional(seq("=", $.razor_attribute_value))),
@@ -495,14 +505,14 @@ module.exports = grammar(CSHARP, {
     element: ($) =>
       seq(
         "<",
-        $._tag_name,
+        $.tag_name,
         optional(
           repeat(
             prec.left(
               seq(
                 choice(
                   $._html_attribute,
-                  $._boolean_html_attribute,
+                  $.boolean_html_attribute,
                   $.razor_html_attribute,
                 ),
                 optional(" "),

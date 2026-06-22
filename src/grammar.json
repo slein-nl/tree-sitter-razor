@@ -13994,7 +13994,7 @@
         "value": ".|\\n|\\r"
       }
     },
-    "_tag_name": {
+    "tag_name": {
       "type": "PATTERN",
       "value": "[a-zA-Z0-9-:]+"
     },
@@ -14007,7 +14007,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_tag_name"
+          "name": "tag_name"
         },
         {
           "type": "STRING",
@@ -14015,15 +14015,15 @@
         }
       ]
     },
-    "_html_attribute_name": {
+    "html_attribute_name": {
       "type": "PATTERN",
       "value": "[a-zA-Z0-9-:]+"
     },
-    "_boolean_html_attribute": {
+    "boolean_html_attribute": {
       "type": "PATTERN",
       "value": "[a-zA-Z0-9-:]+"
     },
-    "_html_attribute_value": {
+    "html_attribute_value": {
       "type": "SEQ",
       "members": [
         {
@@ -14045,7 +14045,7 @@
               },
               {
                 "type": "PATTERN",
-                "value": "[^\"@]+"
+                "value": "[^\"@.(\\[?][^\"@]*"
               }
             ]
           }
@@ -14058,7 +14058,7 @@
     },
     "_html_text": {
       "type": "PATTERN",
-      "value": "[^<>&@.(\\s]([^<>&@]*[^<>&@\\s])?"
+      "value": "[^<>&@.(\\[?\\s]([^<>&@]*[^<>&@\\s])?"
     },
     "razor_attribute_value": {
       "type": "SEQ",
@@ -14094,7 +14094,7 @@
       "members": [
         {
           "type": "SYMBOL",
-          "name": "_html_attribute_name"
+          "name": "html_attribute_name"
         },
         {
           "type": "STRING",
@@ -14102,7 +14102,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_html_attribute_value"
+          "name": "html_attribute_value"
         }
       ]
     },
@@ -14145,7 +14145,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "_tag_name"
+          "name": "tag_name"
         },
         {
           "type": "CHOICE",
@@ -14167,7 +14167,7 @@
                         },
                         {
                           "type": "SYMBOL",
-                          "name": "_boolean_html_attribute"
+                          "name": "boolean_html_attribute"
                         },
                         {
                           "type": "SYMBOL",
@@ -14601,6 +14601,5 @@
     "type",
     "type_declaration",
     "pattern"
-  ],
-  "reserved": {}
+  ]
 }

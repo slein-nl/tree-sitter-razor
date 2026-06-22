@@ -38,3 +38,8 @@ dist/
 *.tar.gz
 *.tgz
 *.zip
+
+# MSVC link artifacts
+*.exp
+*.lib
+*.node
